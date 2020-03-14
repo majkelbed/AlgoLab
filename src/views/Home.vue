@@ -1,18 +1,59 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png" />
-    <HelloWorld msg="Welcome to Your Vue.js App" />
+    <button>Randomize</button>
+    <canvas width="500" height="500" ref="canvas"></canvas>
   </div>
 </template>
 
-<script>
-// @ is an alias to /src
-import HelloWorld from "@/components/HelloWorld.vue";
+<script lang="ts">
+import { Component, Prop, Vue } from "vue-property-decorator";
 
-export default {
-  name: "Home",
-  components: {
-    HelloWorld
-  }
+type renderDatasetArgs = {
+  ctx: CanvasRenderingContext2D;
+  dataset: Array<number>;
 };
+
+@Component({
+  components: {}
+})
+export default class Home extends Vue {
+  private ctx: CanvasRenderingContext2D | null = null;
+  @Prop({ default: () => [1, 5, 9, 14, 22, 3, 2, 1, 1, 6] })
+  dataset!: Array<number>;
+  mounted() {
+    const canvas = this.$refs.canvas as HTMLCanvasElement;
+    this.ctx = canvas.getContext("2d");
+    if (this.ctx !== null) {
+      this.renderDataset({ ctx: this.ctx, dataset: this.dataset });
+    }
+  }
+
+  updated() {
+    if (this.ctx !== null) {
+      this.renderDataset({ ctx: this.ctx, dataset: this.dataset });
+    }
+  }
+
+  public renderDataset(args: renderDatasetArgs) {
+    const { ctx, dataset } = args;
+    dataset.forEach((val, index) => {
+      const width = 10;
+      ctx.beginPath();
+      ctx.strokeRect(2 * index * width, 0, width, val * 5);
+    });
+  }
+}
 </script>
+ 
+
+ <style scoped>
+.home {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+button {
+  margin-bottom: 1rem;
+}
+</style>
