@@ -1,7 +1,8 @@
 <template>
   <div class="home">
-    <button v-on:click="randomizeDataset">Randomize</button>
+    <button @click="handleClick()">Sort</button>
     <canvas width="500" height="500" ref="canvas"></canvas>
+    {{dataset}}
   </div>
 </template>
 
@@ -17,12 +18,39 @@ type renderDatasetArgs = {
 export default class Home extends Vue {
   private ctx: CanvasRenderingContext2D | null = null;
   private canvas: HTMLCanvasElement | null = null;
-  private dataset!: Array<number>;
+  private dataset: Array<number> = [];
+
+  // get dataset() {
+  //   return this._dataset;
+  // }
+
+  // set dataset(val: Array<number>) {
+  //   this._dataset = val;
+  // }
 
   mounted() {
     const canvas = this.$refs.canvas as HTMLCanvasElement;
 
-    this.dataset = [1, 5, 9, 14, 22, 3, 2, 1, 1, 6];
+    this.dataset = [
+      1,
+      5,
+      9,
+      14,
+      22,
+      3,
+      2,
+      1,
+      1,
+      6,
+      15,
+      23,
+      7,
+      4,
+      18,
+      14,
+      13,
+      3
+    ];
     this.canvas = canvas;
     this.ctx = canvas.getContext("2d");
 
@@ -33,18 +61,45 @@ export default class Home extends Vue {
     this.renderDataset();
   }
 
-  public randomizeDataset(): void {
+  async bubbleSort(arr: Array<number>) {
+    const inputArr = arr;
+    const len = inputArr.length;
+    for (let i = 0; i < len; i++) {
+      for (let j = 0; j < len; j++) {
+        if (inputArr[j] > inputArr[j + 1]) {
+          const tmp = inputArr[j];
+          inputArr[j] = inputArr[j + 1];
+          inputArr[j + 1] = tmp;
+
+          console.log(i, j);
+          setTimeout(() => this.renderDataset(), 500);
+          // await this.sleep(300);
+        }
+      }
+    }
+    return inputArr;
+  }
+
+  sleep(ms: number) {
+    return new Promise(res => setTimeout(res, ms));
+  }
+
+  randomizeDataset(): void {
     const newDataset = [];
     for (let index = 0; index < 25; index++) {
       newDataset.push(Math.random() * 15);
     }
     this.dataset = newDataset;
-    this.renderDataset();
+  }
+
+  handleClick() {
+    this.bubbleSort(this.dataset); //pass by value not reference hack
   }
 
   @Watch("dataset")
-  public renderDataset() {
-    const { ctx, dataset, canvas } = this;
+  renderDataset() {
+    const { ctx, canvas } = this;
+    const dataset = this.dataset;
     if (ctx !== null && canvas !== null) {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       dataset.forEach((val, index) => {
