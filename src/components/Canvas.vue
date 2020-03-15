@@ -1,12 +1,11 @@
 <template>
   <div>
-    <canvas width="500" height="500" ref="canvas" v-on:sortevent="handleSort"></canvas>
+    <canvas width="500" height="500" ref="canvas"></canvas>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue, Prop, Watch } from "vue-property-decorator";
-import { bubbleSort } from "@/functions/bubbleSort.ts";
 
 @Component
 export default class Canvas extends Vue {
@@ -27,9 +26,7 @@ export default class Canvas extends Vue {
       });
     }
   }
-  handleSort(e: Event) {
-    console.log(e, "sort handling");
-  }
+
   mounted() {
     const canvas = this.$refs.canvas as HTMLCanvasElement;
     this.canvas = canvas;

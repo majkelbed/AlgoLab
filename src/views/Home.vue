@@ -1,5 +1,5 @@
 <template>
-  <div class="home" v-on:sortevent="handleSort">
+  <div>
     <button v-on:click="handleClick()">Sort</button>
     <Canvas v-bind:dataset="this.dataset" />
   </div>
@@ -8,7 +8,8 @@
 <script lang="ts">
 import { Component, Vue, Emit } from "vue-property-decorator";
 import Canvas from "@/components/Canvas.vue";
-import { bubbleSort } from "@/functions/bubbleSort.ts";
+import { sleep } from "@/functions/utils.ts";
+import { bubbleSort } from "@/functions/sortingAlgorythms.ts";
 
 @Component({
   components: {
@@ -25,14 +26,32 @@ export default class Home extends Vue {
     }
     this.dataset = newDataset;
   }
-  @Emit("sortevent")
+
   handleClick() {
-    this.$emit("sortevent");
-    console.log("Event sort");
-    // bubbleSort(this.dataset);
+    this.bubbleSort();
   }
-  handleSort(e: Event) {
-    console.log(e, "sort handling");
+  // @TODO: Find out way to retive render function from child component to call instead of spread operator hack for reference change
+  async bubbleSort() {
+    const changeDatasetReference = (newDataset: Array<number>) => {
+      this.dataset = [...newDataset];
+    };
+    await bubbleSort(this.dataset, changeDatasetReference);
+    // const inputArr = this.dataset;
+    // const len = inputArr.length;
+    // let swapped;
+    // do {
+    //   swapped = false;
+    //   for (let i = 0; i < len; i++) {
+    //     if (inputArr[i] > inputArr[i + 1]) {
+    //       const tmp = inputArr[i];
+    //       inputArr[i] = inputArr[i + 1];
+    //       inputArr[i + 1] = tmp;
+    //       swapped = true;
+    //       this.dataset = [...inputArr];
+    //       await sleep(300);
+    //     }
+    //   }
+    // } while (swapped);
   }
 }
 </script>
