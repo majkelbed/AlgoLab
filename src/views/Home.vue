@@ -1,6 +1,6 @@
 <template>
   <div>
-    <button v-on:click="handleClick()">Sort</button>
+    <button v-on:click="handleClick()">quick Sort</button>
     <Canvas v-bind:dataset="this.dataset" />
   </div>
 </template>
@@ -9,7 +9,7 @@
 import { Component, Vue, Emit } from "vue-property-decorator";
 import Canvas from "@/components/Canvas.vue";
 import { sleep } from "@/functions/utils.ts";
-import { bubbleSort } from "@/functions/sortingAlgorythms.ts";
+import { bubbleSort, quickSort } from "@/functions/sortingAlgorythms.ts";
 
 @Component({
   components: {
@@ -21,12 +21,14 @@ export default class Home extends Vue {
 
   randomizeDataset(): void {
     const newDataset = [];
-    for (let index = 0; index < 25; index++) {
-      newDataset.push(Math.random() * 15);
+    for (let index = 0; index < 40; index++) {
+      newDataset.push(Math.random() * 50 + 1);
     }
     this.dataset = newDataset;
   }
-
+  mounted() {
+    this.randomizeDataset();
+  }
   handleClick() {
     this.bubbleSort();
   }
@@ -35,23 +37,12 @@ export default class Home extends Vue {
     const changeDatasetReference = (newDataset: Array<number>) => {
       this.dataset = [...newDataset];
     };
-    await bubbleSort(this.dataset, changeDatasetReference);
-    // const inputArr = this.dataset;
-    // const len = inputArr.length;
-    // let swapped;
-    // do {
-    //   swapped = false;
-    //   for (let i = 0; i < len; i++) {
-    //     if (inputArr[i] > inputArr[i + 1]) {
-    //       const tmp = inputArr[i];
-    //       inputArr[i] = inputArr[i + 1];
-    //       inputArr[i + 1] = tmp;
-    //       swapped = true;
-    //       this.dataset = [...inputArr];
-    //       await sleep(300);
-    //     }
-    //   }
-    // } while (swapped);
+    await quickSort(
+      this.dataset,
+      0,
+      this.dataset.length,
+      changeDatasetReference
+    );
   }
 }
 </script>
